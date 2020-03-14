@@ -48,6 +48,7 @@ artifacts/
 *_p.c
 *_i.h
 *.ilk
+*.meta
 *.obj
 *.pch
 *.pdb
@@ -218,6 +219,4 @@ _Pvt_Extensions
 *.o
 
 **/Properties/launchSettings.json
-/.DS_Store
 .DS_Store
-

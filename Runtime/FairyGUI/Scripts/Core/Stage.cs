@@ -658,7 +658,17 @@ namespace FairyGUI
             else if (evt.rawType == EventType.KeyUp)
             {
                 TouchInfo touch = _touches[0];
+                touch.keyCode = evt.keyCode;
                 touch.modifiers = evt.modifiers;
+                touch.character = evt.character;
+                InputEvent.shiftDown = (evt.modifiers & EventModifiers.Shift) != 0;
+
+                touch.UpdateEvent();
+                DisplayObject f = this.focus;
+                if (f != null)
+                    f.BubbleEvent("onKeyUp", touch.evt);
+                else
+                    DispatchEvent("onKeyUp", touch.evt);
             }
 #if UNITY_2017_1_OR_NEWER
             else if (evt.type == EventType.ScrollWheel)
@@ -669,7 +679,7 @@ namespace FairyGUI
                 if (_touchTarget != null)
                 {
                     TouchInfo touch = _touches[0];
-                    touch.mouseWheelDelta = (int)evt.delta.y;
+                    touch.mouseWheelDelta = evt.delta.y;
                     touch.UpdateEvent();
                     _touchTarget.BubbleEvent("onMouseWheel", touch.evt);
                     touch.mouseWheelDelta = 0;
@@ -1152,7 +1162,7 @@ namespace FairyGUI
         public KeyCode keyCode;
         public char character;
         public EventModifiers modifiers;
-        public int mouseWheelDelta;
+        public float mouseWheelDelta;
         public int button;
 
         public float downX;
@@ -1263,6 +1273,17 @@ namespace FairyGUI
         {
             began = false;
 
+            if (Time.realtimeSinceStartup - lastClickTime < 0.35f)
+            {
+                if (clickCount == 2)
+                    clickCount = 1;
+                else
+                    clickCount++;
+            }
+            else
+                clickCount = 1;
+            lastClickTime = Time.realtimeSinceStartup;
+
             UpdateEvent();
 
             if (touchMonitors.Count > 0)
@@ -1281,17 +1302,6 @@ namespace FairyGUI
             }
             else
                 target.BubbleEvent("onTouchEnd", evt);
-
-            if (Time.realtimeSinceStartup - lastClickTime < 0.35f)
-            {
-                if (clickCount == 2)
-                    clickCount = 1;
-                else
-                    clickCount++;
-            }
-            else
-                clickCount = 1;
-            lastClickTime = Time.realtimeSinceStartup;
         }
 
         public DisplayObject ClickTest()

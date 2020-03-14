@@ -977,7 +977,7 @@ namespace FairyGUI
                         }
                     }
                 }
-                else if (evt.ctrl || selectionMode == ListSelectionMode.Multiple_SingleClick)
+                else if (evt.ctrl || evt.command || selectionMode == ListSelectionMode.Multiple_SingleClick)
                 {
                     button.selected = !button.selected;
                 }
@@ -1000,6 +1000,16 @@ namespace FairyGUI
                 UpdateSelectionController(index);
         }
 
+        /// <summary>
+        /// Resize to list size to fit specified item count. 
+        /// If list layout is single column or flow horizontally, the height will change to fit. 
+        /// If list layout is single row or flow vertically, the width will change to fit.
+        /// </summary>
+        public void ResizeToFit()
+        {
+            ResizeToFit(int.MaxValue, 0);
+        }
+        
         /// <summary>
         /// Resize to list size to fit specified item count. 
         /// If list layout is single column or flow horizontally, the height will change to fit. 
